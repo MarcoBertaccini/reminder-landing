@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reminder & Retention — Zenith Studio</title>
+  <meta name="description" content="Automatizza i promemoria e fidelizza i tuoi clienti con WhatsApp. Meno no-show, più ritorni." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --cyan: #00d4ff;
+      --violet: #9b59ff;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --card-bg: #12121e;
+      --radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── UTILS ── */
+    .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,212,255,0.08);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 900; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-cta {
+      display: inline-flex; align-items: center;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: #000; font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 10px 22px; border-radius: 8px; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100svh;
+      display: flex; align-items: center;
+      padding: 100px 0 80px;
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(ellipse at center, rgba(0,212,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; bottom: -150px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(155,89,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-block;
+      border: 1px solid rgba(0,212,255,0.35);
+      color: var(--cyan); font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 100px; margin-bottom: 28px;
+    }
+    .hero-headline {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 900; line-height: 1.1;
+      text-transform: uppercase; letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .hero-desc {
+      font-size: 1.05rem; color: var(--muted);
+      max-width: 580px; margin-bottom: 44px; line-height: 1.75;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: #000; font-weight: 800; font-size: 1rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 16px 36px; border-radius: 10px; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 0 24px rgba(0,212,255,0.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,212,255,0.35);
+    }
+    .hero-stat-row {
+      display: flex; gap: 40px; margin-top: 64px; flex-wrap: wrap;
+    }
+    .hero-stat strong {
+      display: block; font-size: 2rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-stat span { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 100px 0; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--cyan); margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em;
+      line-height: 1.1; margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 1rem; color: var(--muted); max-width: 560px; line-height: 1.75;
+    }
+
+    /* ── PRODUCTS ── */
+    #products { background: var(--bg2); }
+    .products-header { text-align: center; margin-bottom: 64px; }
+    .products-header .section-desc { margin: 0 auto; }
+
+    .products-grid {
+      display: grid; grid-template-columns: 1fr; gap: 28px;
+    }
+    @media (min-width: 700px) {
+      .products-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      position: relative; overflow: hidden;
+      border: 1px solid transparent;
+      background-clip: padding-box;
+    }
+    .product-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: var(--radius);
+      padding: 1px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .product-card::after {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%; pointer-events: none;
+    }
+    .product-card.reminder::after { background: radial-gradient(circle, rgba(0,212,255,0.08), transparent 70%); }
+    .product-card.retention::after { background: radial-gradient(circle, rgba(155,89,255,0.08), transparent 70%); }
+
+    .product-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px; margin-bottom: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+    }
+    .reminder .product-icon { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); }
+    .retention .product-icon { background: rgba(155,89,255,0.1); border: 1px solid rgba(155,89,255,0.2); }
+
+    .product-name {
+      font-size: 1.4rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .reminder .product-name { color: var(--cyan); }
+    .retention .product-name { color: var(--violet); }
+
+    .product-tagline {
+      font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5;
+    }
+    .product-desc {
+      font-size: 1rem; color: var(--text); margin-bottom: 28px; line-height: 1.7;
+    }
+
+    .benefits { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .benefits li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.92rem; color: var(--text);
+    }
+    .benefits li::before {
+      content: '✓';
+      font-weight: 900; font-size: 0.85rem; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .reminder .benefits li::before { color: var(--cyan); }
+    .retention .benefits li::before { color: var(--violet); }
+
+    /* ── HOW IT WORKS ── */
+    #how {
+      background: var(--bg);
+      position: relative; overflow: hidden;
+    }
+    #how::before {
+      content: '';
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(155,89,255,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .how-header { text-align: center; margin-bottom: 72px; }
+    .how-header .section-desc { margin: 0 auto; }
+
+    .steps {
+      display: grid; grid-template-columns: 1fr; gap: 0;
+      position: relative;
+    }
+    @media (min-width: 700px) {
+      .steps { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .step {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 32px 24px; position: relative;
+    }
+    .step + .step::before {
+      content: '';
+      position: absolute;
+    }
+    @media (min-width: 700px) {
+      .step + .step::before {
+        top: 52px; left: 0;
+        width: 1px; height: 40px;
+        background: linear-gradient(to bottom, var(--cyan), var(--violet));
+        transform: none;
+      }
+    }
+
+    .step-num {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; font-weight: 900; margin-bottom: 24px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(155,89,255,0.12));
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--cyan); position: relative;
+    }
+    .step-num::after {
+      content: '';
+      position: absolute; inset: -4px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      z-index: -1; opacity: 0.2; filter: blur(6px);
+    }
+    .step-emoji { font-size: 2rem; }
+    .step-title {
+      font-size: 1.1rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 12px; color: var(--text);
+    }
+    .step-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.65; }
+
+    /* connector line between steps */
+    .steps-connector {
+      display: none;
+    }
+    @media (min-width: 700px) {
+      .steps-wrapper { display: flex; align-items: flex-start; gap: 0; }
+      .steps-connector {
+        display: block; flex: 1;
+        height: 1px; margin-top: 40px;
+        background: linear-gradient(to right, var(--cyan), var(--violet));
+        opacity: 0.3;
+      }
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--bg2);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box {
+      max-width: 680px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .cta-box .section-title { margin-bottom: 20px; }
+    .cta-box .section-desc { margin: 0 auto 44px; }
+    .cta-note {
+      margin-top: 20px; font-size: 0.85rem; color: var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(0,212,255,0.06);
+      padding: 40px 0;
+      text-align: center;
+    }
+    .footer-logo {
+      font-size: 1rem; font-weight: 900; letter-spacing: 0.14em;
+      text-transform: uppercase; text-decoration: none;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: inline-block; margin-bottom: 12px;
+    }
+    footer p { font-size: 0.82rem; color: var(--muted); }
+    footer a { color: var(--cyan); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── SCROLL REVEAL (CSS-only fade-up) ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        opacity: 0; transform: translateY(28px);
+        transition: opacity .6s ease, transform .6s ease;
+      }
+      .reveal.visible { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="logo">Zenith</a>
+    <a href="mailto:info@zenith-studio.it" class="nav-cta">Contattaci</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-tag">Reminder &amp; Retention — Zenith Studio</div>
+    <h1 class="hero-headline">
+      I tuoi clienti<br>
+      non si presentano?<br>
+      <span class="gradient-text">Costa caro.</span>
+    </h1>
+    <p class="hero-sub">Ogni no-show è fatturato perso. Per sempre.</p>
+    <p class="hero-desc">
+      Automatizziamo i promemoria via WhatsApp e i messaggi di riattivazione,
+      così non devi più rincorrere i clienti — ci pensa il sistema.
+    </p>
+    <a href="#products" class="btn-primary">Scopri come funziona</a>
+    <div class="hero-stat-row">
+      <div class="hero-stat">
+        <strong>-70%</strong>
+        <span>No-show medi</span>
+      </div>
+      <div class="hero-stat">
+        <strong>+40%</strong>
+        <span>Ritorni clienti</span>
+      </div>
+      <div class="hero-stat">
+        <strong>0</strong>
+        <span>Minuti spesi da te</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="container">
+    <div class="products-header reveal">
+      <p class="section-label">I nostri strumenti</p>
+      <h2 class="section-title">Due soluzioni,<br><span class="gradient-text">un unico obiettivo</span></h2>
+      <p class="section-desc">Trasformiamo l'automazione WhatsApp in entrate costanti per il tuo business.</p>
+    </div>
+
+    <div class="products-grid">
+
+      <!-- REMINDER -->
+      <div class="product-card reminder reveal">
+        <div class="product-icon">📩</div>
+        <div class="product-name">Reminder</div>
+        <p class="product-tagline">Promemoria automatico il giorno prima dell'appuntamento</p>
+        <p class="product-desc">
+          Il giorno prima di ogni appuntamento, il cliente riceve un messaggio WhatsApp personalizzato.
+          Nessuna telefonata, nessun post-it: il sistema lavora per te ogni notte.
+        </p>
+        <ul class="benefits">
+          <li>Messaggio WhatsApp automatico e personalizzato</li>
+          <li>Riduzione drastica dei no-show</li>
+          <li>Gestione disdette in anticipo per riempire il calendario</li>
+          <li>Zero intervento manuale da parte tua</li>
+        </ul>
+      </div>
+
+      <!-- RETENTION -->
+      <div class="product-card retention reveal">
+        <div class="product-icon">🔁</div>
+        <div class="product-name">Retention</div>
+        <p class="product-tagline">Messaggio automatico per riportare i clienti che non tornano</p>
+        <p class="product-desc">
+          Dopo X settimane dall'ultimo appuntamento, il sistema invia un messaggio WhatsApp
+          per riagganciare il cliente. Lui si sente ricordato, tu riempi l'agenda.
+        </p>
+        <ul class="benefits">
+          <li>Riattivazione automatica dopo settimane configurabili</li>
+          <li>Più ritorni senza sforzo commerciale</li>
+          <li>Messaggi naturali, non spam — tono su misura</li>
+          <li>Clienti fidelizzati che tornano prima</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="how-header reveal">
+      <p class="section-label">Come funziona</p>
+      <h2 class="section-title">Tre passi e<br><span class="gradient-text">il gioco è fatto</span></h2>
+      <p class="section-desc">Setup una tantum, poi è tutto automatico. Niente da imparare, niente da gestire.</p>
+    </div>
+
+    <div style="display:flex; align-items:flex-start; gap:0; flex-wrap:wrap;">
+
+      <div class="step reveal" style="flex:1; min-width:220px;">
+        <div class="step-num"><span class="step-emoji">🔗</span></div>
+        <div class="step-title">1. Connetti</div>
+        <p class="step-desc">Integriamo il sistema con il tuo gestionale o calendario. Bastano pochi minuti e ci pensiamo noi.</p>
+      </div>
+
+      <div style="flex:0 0 40px; height:1px; margin-top:40px; background:linear-gradient(to right,var(--cyan),var(--violet)); opacity:.3; display:none;" class="hconn"></div>
+
+      <div class="step reveal" style="flex:1; min-width:220px;">
+        <div class="step-num"><span class="step-emoji">⚙️</span></div>
+        <div class="step-title">2. Configura</div>
+        <p class="step-desc">Decidi il timing e il tono dei messaggi. Personalizzazione totale sul tuo brand, zero tecnicismi.</p>
+      </div>
+
+      <div style="flex:0 0 40px; height:1px; margin-top:40px; background:linear-gradient(to right,var(--cyan),var(--violet)); opacity:.3; display:none;" class="hconn"></div>
+
+      <div class="step reveal" style="flex:1; min-width:220px;">
+        <div class="step-num"><span class="step-emoji">🚀</span></div>
+        <div class="step-title">3. Guadagna</div>
+        <p class="step-desc">Da quel momento il sistema lavora in automatico, 7 giorni su 7, mentre tu ti concentri sul tuo lavoro.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-box reveal">
+      <p class="section-label">Inizia oggi</p>
+      <h2 class="section-title">Smettila di perdere<br><span class="gradient-text">clienti e fatturato</span></h2>
+      <p class="section-desc">
+        Scrivici, ti spieghiamo come funziona per il tuo tipo di business e partiamo insieme.
+        Nessun impegno, nessuna complicazione.
+      </p>
+      <a href="mailto:info@zenith-studio.it" class="btn-primary">
+        ✉ Contattaci ora
+      </a>
+      <p class="cta-note">Risposta garantita entro 24h — <a href="mailto:info@zenith-studio.it" style="color:var(--cyan)">info@zenith-studio.it</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <a href="#" class="footer-logo">Zenith Studio</a>
+    <p>&copy; 2026 Zenith Studio — <a href="mailto:info@zenith-studio.it">info@zenith-studio.it</a></p>
+  </div>
+</footer>
+
+<script>
+  // Scroll-reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // Show horizontal connectors on desktop
+  function updateConn() {
+    document.querySelectorAll('.hconn').forEach(el => {
+      el.style.display = window.innerWidth >= 700 ? 'block' : 'none';
+    });
+  }
+  updateConn();
+  window.addEventListener('resize', updateConn);
+</script>
+
+</body>
+</html>
